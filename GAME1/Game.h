@@ -4,11 +4,7 @@
 #include<vector>
 #include<ctime>
 
-#include<SFML/Graphics.hpp>
-#include<SFML/System.hpp>
-#include<SFML/Window.hpp>
-#include<SFML/Audio.hpp>
-#include<SFML/Network.hpp>
+#include "Player.h"
 
 /*
 	Class that acts as the game engine.
@@ -36,6 +32,8 @@ private:
 	//Game objects
 	std::vector<sf::RectangleShape> enemies;
 	sf::RectangleShape enemy;
+
+	Player player;
 
 	//Private Functions
 	void initVariable();

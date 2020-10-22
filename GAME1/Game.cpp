@@ -93,6 +93,8 @@ void Game::pollEvents()
 				break;
 		}
 	}
+
+	this->player.update();
 }
 
 void Game::updateMousePositions()
@@ -182,6 +184,7 @@ void Game::reder()
 
 	//Draw game objects
 	this->renderEnemies();
+	this->player.render(this->window);
 
 	this->window->display();
 }
