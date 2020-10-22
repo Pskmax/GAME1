@@ -37,11 +37,10 @@ private:
 	std::vector<sf::RectangleShape> enemies;
 	sf::RectangleShape enemy;
 
-
 	//Private Functions
 	void initVariable();
 	void initWindow();
-	void iniitEnemies();
+	void initEnemies();	
 
 public:
 	//Constructors / Destructors

@@ -18,11 +18,11 @@ void Game::initWindow()
 	this->videoMode.width = 1080;
 
 	this->window = new sf::RenderWindow(this->videoMode, "REVERSE!", sf::Style::Titlebar | sf::Style::Close);
-	
+
 	this->window->setFramerateLimit(60);
 }
 
-void Game::iniitEnemies()
+void Game::initEnemies()
 {
 	this->enemy.setPosition(10.f, 10.f);
 	this->enemy.setSize(sf::Vector2f(100.f, 100.f));
@@ -36,7 +36,7 @@ Game::Game()
 {
 	this->initVariable();
 	this->initWindow();
-	this->iniitEnemies();
+	this->initEnemies();
 }
 
 Game::~Game()
@@ -156,8 +156,6 @@ void Game::update()
 		<< sf::Mouse::getPosition(*this->window).y << "\n";
 
 }
-
-
 
 void Game::renderEnemies()
 {
