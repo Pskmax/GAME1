@@ -9,17 +9,21 @@
 class Player
 {
 private:
-	sf::RectangleShape shape;
-
 	sf::Texture playerTexture;
 	sf::Sprite  playerSprite;
 
-	float movementSpeed;
+	sf::Clock clock;
+
+	int spriteSizeX;
+	int spriteSizeY;
+	int animationFrame = 0;
+
+	float movementSpeedX;
+	float movementSpeedY;
 
 	void initVariables();
-	void initShape();
 	void initPlayer();
-	void initSprite();
+	void time();
 
 public:
 	Player(float x = 0.f, float y = 0.f);

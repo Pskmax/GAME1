@@ -153,10 +153,12 @@ void Game::update()
 	//Relative to the screen
 	//std::cout << "Mouse pos: " << sf::Mouse::getPosition().x << " " << sf::Mouse::getPosition().y << "\n";
 	//Relative to the window
+	
+	/*
 	std::cout << "Mouse pos: " 
 		<< sf::Mouse::getPosition(*this->window).x << " " 
 		<< sf::Mouse::getPosition(*this->window).y << "\n";
-
+	*/
 }
 
 void Game::renderEnemies()
