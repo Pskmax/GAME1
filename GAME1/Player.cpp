@@ -11,9 +11,14 @@ void Player::initShape()
 	this->shape.setSize(sf::Vector2f(50.f, 50.f));
 }
 
-void Player::playerTexture()
+void Player::initPlayer()
 {
+	this->playerTexture.loadFromFile("image/Player.png");
+}
 
+void Player::initSprite()
+{
+	this->playerSprite.setTexture(playerTexture);
 }
 
 Player::Player(float x, float y)
@@ -53,11 +58,32 @@ void Player::updateInput()
 	}
 }
 
-void Player::update()
+void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
-	//Window bounds collision
+	sf::FloatRect playerBounds = this->shape.getGlobalBounds();
+	//Left
+	if (playerBounds.left <= 0.f)
+		this->shape.setPosition(0.f, playerBounds.top);
 
+	//Right
+	else if (playerBounds.left + playerBounds.width >= target->getSize().x)
+		this->shape.setPosition(target->getSize().x - playerBounds.width, playerBounds.top);
+
+	//Top
+	if (playerBounds.top <= 0.f)
+		this->shape.setPosition(playerBounds.left, 0.f);
+
+	//Bottom
+	else if (playerBounds.top + playerBounds.height >= target->getSize().y)
+		this->shape.setPosition(playerBounds.left, target->getSize().y - playerBounds.height);
+}
+
+void Player::update(const sf::RenderTarget* target)
+{
 	this->updateInput();
+
+	//Window bounds collision
+	this->updateWindowBoundsCollision(target);
 }
 
 void Player::render(sf::RenderTarget* target)

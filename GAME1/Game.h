@@ -57,6 +57,6 @@ public:
 	void update();
 
 	void renderEnemies();
-	void reder();
+	void render();
 };
 

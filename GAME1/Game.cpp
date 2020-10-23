@@ -93,8 +93,6 @@ void Game::pollEvents()
 				break;
 		}
 	}
-
-	this->player.update();
 }
 
 void Game::updateMousePositions()
@@ -145,6 +143,8 @@ void Game::update()
 {
 	this->pollEvents();
 
+	this->player.update(this->window);
+
 	this->updateMousePositions();
 
 	this->updateEnemies();
@@ -168,7 +168,7 @@ void Game::renderEnemies()
 	}
 }
 
-void Game::reder()
+void Game::render()
 {
 	/*
 		@return void

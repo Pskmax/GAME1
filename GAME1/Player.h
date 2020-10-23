@@ -11,18 +11,23 @@ class Player
 private:
 	sf::RectangleShape shape;
 
+	sf::Texture playerTexture;
+	sf::Sprite  playerSprite;
+
 	float movementSpeed;
 
 	void initVariables();
 	void initShape();
-	void playerTexture();
+	void initPlayer();
+	void initSprite();
 
 public:
 	Player(float x = 0.f, float y = 0.f);
 	virtual ~Player();
 
 	void updateInput();
-	void update();
+	void updateWindowBoundsCollision(const sf::RenderTarget* target);
+	void update(const sf::RenderTarget* target);
 	void render(sf::RenderTarget* target);
 };
 

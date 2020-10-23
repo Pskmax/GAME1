@@ -16,7 +16,7 @@ int main()
 		game.update();
 
 		//Render
-		game.reder();
+		game.render();
 	}
 
 	//End of application
