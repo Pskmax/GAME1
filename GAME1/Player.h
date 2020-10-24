@@ -12,8 +12,6 @@ private:
 	sf::Texture playerTexture;
 	sf::Sprite  playerSprite;
 
-	sf::Clock clock;
-
 	int spriteSizeX;
 	int spriteSizeY;
 	int animationFrame = 0;
@@ -23,7 +21,6 @@ private:
 
 	void initVariables();
 	void initPlayer();
-	void time();
 
 public:
 	Player(float x = 0.f, float y = 0.f);

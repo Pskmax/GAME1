@@ -5,6 +5,7 @@
 #include<ctime>
 
 #include "Player.h"
+#include "Bat.h"
 
 /*
 	Class that acts as the game engine.
@@ -25,20 +26,20 @@ private:
 
 	//Game logic
 	int points;
-	float enemySpawnTimer;
-	float enemySpawnTimerMax;
-	int maxEnemies;
+	float spawnTimer;
+	float spawnTimerMax;
+	int maxBats;
 
 	//Game objects
-	std::vector<sf::RectangleShape> enemies;
-	sf::RectangleShape enemy;
+	std::vector<Bat> bats;
 
 	Player player;
+
+	Bat bat;
 
 	//Private Functions
 	void initVariable();
 	void initWindow();
-	void initEnemies();	
 
 public:
 	//Constructors / Destructors
@@ -49,14 +50,12 @@ public:
 	const bool running() const;
 
 	//Functions
-	void spawnEnemy();
-
+	void spawnBat();
 	void pollEvents();
+
 	void updateMousePositions();
-	void updateEnemies();
 	void update();
 
-	void renderEnemies();
 	void render();
 };
 

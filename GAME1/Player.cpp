@@ -2,8 +2,8 @@
 
 void Player::initVariables()
 {
-	this->movementSpeedX = 5.f;
-	this->movementSpeedY = 4.f;
+	this->movementSpeedX = 8.f;
+	this->movementSpeedY = 7.5f;
 }
 
 void Player::initPlayer()
@@ -19,18 +19,12 @@ void Player::initPlayer()
 	int animationFrame = 0;
 }
 
-void Player::time()
-{
-	sf::Time time;
-}
-
-
 Player::Player(float x, float y)
 {
 	this->playerSprite.setPosition(x, y);
 
 	this->initVariables();
-	this->initPlayer(); 
+	this->initPlayer();
 }
 
 Player::~Player()
@@ -74,22 +68,21 @@ void Player::updateInput()
 
 void Player::updateWindowBoundsCollision(const sf::RenderTarget* target)
 {
-	sf::FloatRect playerBounds = this->playerSprite.getGlobalBounds();
 	//Left
-	if (playerBounds.left <= 0.f)
-		this->playerSprite.setPosition(0.f, playerBounds.top);
-
+	if (this->playerSprite.getGlobalBounds().left <= 0.f)
+		this->playerSprite.setPosition(0.f, this->playerSprite.getGlobalBounds().top);
+	
 	//Right
-	else if (playerBounds.left + playerBounds.width >= target->getSize().x)
-		this->playerSprite.setPosition(target->getSize().x - playerBounds.width, playerBounds.top);
+	if (this->playerSprite.getGlobalBounds().left + this->playerSprite.getGlobalBounds().width >= target->getSize().x)
+		this->playerSprite.setPosition(target->getSize().x - this->playerSprite.getGlobalBounds().width, this->playerSprite.getGlobalBounds().top);
 
 	//Top
-	if (playerBounds.top <= 0.f)
-		this->playerSprite.setPosition(playerBounds.left, 0.f);
+	if (this->playerSprite.getGlobalBounds().top <= 0.f)
+		this->playerSprite.setPosition(this->playerSprite.getGlobalBounds().left, 0.f);
 
 	//Bottom
-	else if (playerBounds.top + playerBounds.height >= target->getSize().y)
-		this->playerSprite.setPosition(playerBounds.left, target->getSize().y - playerBounds.height);
+	if (this->playerSprite.getGlobalBounds().top + this->playerSprite.getGlobalBounds().height >= target->getSize().y)
+		this->playerSprite.setPosition(this->playerSprite.getGlobalBounds().left, target->getSize().y - this->playerSprite.getGlobalBounds().height);
 }
 
 void Player::update(const sf::RenderTarget* target)
@@ -98,9 +91,6 @@ void Player::update(const sf::RenderTarget* target)
 
 	//Window bounds collision
 	this->updateWindowBoundsCollision(target);
-
-	sf::Time time=this->clock.restart();
-	printf(" %f\n", time.asSeconds());
 }
 
 void Player::render(sf::RenderTarget* target)
