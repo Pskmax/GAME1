@@ -271,6 +271,12 @@ int main()
 			}
 		}
 
+		if (batSprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds()))
+		{
+			playerSprite.setPosition(playerSpawnPoint);
+			batSprite.setPosition(batSpawnPoint);
+		}
+
 		// End Program
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{
