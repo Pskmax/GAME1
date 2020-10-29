@@ -86,6 +86,28 @@ int main()
 	int playerAnimationFrame = 0;
 	sf::Clock playerClock;
 
+	// Sword Texture
+	bool sword = 0;
+
+	sf::Texture swordTexture;
+	if (!swordTexture.loadFromFile("image/SwordSlash.png"))
+	{
+		std::cout << "Player Load failed" << std::endl;
+	}
+	// Sword Sprite
+	// Animation 1 -> x = 109 y = 80
+	// Animation 2 -> x = 179 y = 80
+	// Animation 3 -> x = 249 y = 80
+	// Size x = 69 y = 40
+	sf::IntRect rectSword(109, 80, 69, 40);
+	sf::Sprite swordSprite(swordTexture, rectSword);
+	swordSprite.setTexture(swordTexture);
+	swordSprite.setScale(0.8f, 1.2f);
+
+	// Sword Position
+	sf::Vector2f swordSpawnPoint = { 150.f, 100.f };
+	swordSprite.setPosition(swordSpawnPoint);
+
 	// Bat Player
 	sf::Texture batTexture;
 	if (!batTexture.loadFromFile("image/Monsters.png"))
@@ -127,44 +149,6 @@ int main()
 		window.draw(heartSprite3);
 
 		// Player Update
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			rectPlayer.top = playerSizeY * 2;
-			playerSprite.move(playerMoveSpeedX, 0.f);
-			if (playerClock.getElapsedTime().asSeconds() > 0.3f)
-			{
-				if (rectPlayer.left == (playerSizeX * 3))
-				{
-					rectPlayer.left = 0;
-				}
-				else
-				{
-					rectPlayer.left += playerSizeX;
-				}
-				playerClock.restart();
-			}
-			playerSprite.setTextureRect(rectPlayer);
-		}
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			rectPlayer.top = playerSizeY;
-			playerSprite.move(-playerMoveSpeedX, 0.f);
-			if (playerClock.getElapsedTime().asSeconds() > 0.3f)
-			{
-				if (rectPlayer.left == (playerSizeX * 3))
-				{
-					rectPlayer.left = 0;
-				}
-				else
-				{
-					rectPlayer.left += playerSizeX;
-				}
-				playerClock.restart();
-			}
-			playerSprite.setTextureRect(rectPlayer);
-		}
-
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 		{
 			rectPlayer.top = playerSizeY * 3;
@@ -203,12 +187,88 @@ int main()
 			playerSprite.setTextureRect(rectPlayer);
 		}
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			rectPlayer.top = playerSizeY * 2;
+			playerSprite.move(playerMoveSpeedX, 0.f);
+			if (playerClock.getElapsedTime().asSeconds() > 0.3f)
+			{
+				if (rectPlayer.left == (playerSizeX * 3))
+				{
+					rectPlayer.left = 0;
+				}
+				else
+				{
+					rectPlayer.left += playerSizeX;
+				}
+				playerClock.restart();
+			}
+			playerSprite.setTextureRect(rectPlayer);
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			rectPlayer.top = playerSizeY;
+			playerSprite.move(-playerMoveSpeedX, 0.f);
+			if (playerClock.getElapsedTime().asSeconds() > 0.3f)
+			{
+				if (rectPlayer.left == (playerSizeX * 3))
+				{
+					rectPlayer.left = 0;
+				}
+				else
+				{
+					rectPlayer.left += playerSizeX;
+				}
+				playerClock.restart();
+			}
+			playerSprite.setTextureRect(rectPlayer);
+		}
+
 		playerAnimationFrame++;
 
 		if (playerAnimationFrame >= 4)
 		{
 			playerAnimationFrame = 0;
 		}
+
+		// Sword Update
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		{
+			if (rectPlayer.left <= (playerSizeX * 3))
+			{
+				// Right
+				if (rectPlayer.top == (playerSizeY * 2))
+				{
+					swordSprite.setPosition(playerSprite.getPosition().x + 30.f, playerSprite.getPosition().y);
+				}
+				// Left
+				if (rectPlayer.top == (playerSizeY))
+				{
+					swordSprite.setPosition(playerSprite.getPosition().x, playerSprite.getPosition().y);
+					swordSprite.setScale(-0.8f, 1.2f);
+
+				}
+				// Top
+				if (rectPlayer.top == (playerSizeY * 3))
+				{
+					swordSprite.setPosition(playerSprite.getPosition().x - 5.f, playerSprite.getPosition().y);
+					swordSprite.rotate(-90.f);
+				}
+				// Bottom
+				if (rectPlayer.top == 0)
+				{
+					swordSprite.setPosition(playerSprite.getPosition().x - 5.f, playerSprite.getPosition().y + 40.f);
+					swordSprite.rotate(-90.f);
+					swordSprite.setScale(-0.8f, 1.2f);
+				}
+				
+			}
+			window.draw(swordSprite);
+			swordSprite.setRotation(0.f);
+			swordSprite.setScale(0.8f, 1.2f);
+		}
+
 
 		// Bat Update
 
