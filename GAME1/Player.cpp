@@ -1,3 +1,4 @@
+#include "IncludeEverything.h"
 #include "Player.h"
 
 void Player::initVariables()
@@ -30,6 +31,16 @@ Player::Player(float x, float y)
 Player::~Player()
 {
 	
+}
+
+float Player::playerPosX()
+{
+	return this->playerSprite.getPosition().x;
+}
+
+float Player::playerPosY()
+{
+	return this->playerSprite.getPosition().y;
 }
 
 void Player::updateInput()

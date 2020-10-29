@@ -1,3 +1,4 @@
+#include "IncludeEverything.h"
 #include "Game.h"
 
 //Private functions

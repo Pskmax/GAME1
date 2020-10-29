@@ -1,9 +1,4 @@
-
-#include<SFML/Graphics.hpp>
-#include<SFML/System.hpp>
-#include<SFML/Window.hpp>
-#include<SFML/Audio.hpp>
-#include<SFML/Network.hpp>
+#include"Player.h"
 
 class Bat
 {
@@ -14,7 +9,13 @@ private:
 	int spriteSizeX;
 	int spriteSizeY;
 
+	float movementSpeedX;
+	float movementSpeedY;
+
+	void initVariables();
 	void initBat();
+
+	void batFollow();
 
 public:
 	Bat(float x = 100.f, float y = 100.f);
