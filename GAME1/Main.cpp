@@ -9,12 +9,6 @@
 #include<SFML/Audio.hpp>
 #include<SFML/Network.hpp>
 
-float playerMoveSpeedX = .15f;
-float playerMoveSpeedY = .15f;
-
-float batMoveSpeedX = .05f;
-float batMoveSpeedY = .05f;
-
 int main()
 {
 	// Render Window
@@ -83,12 +77,13 @@ int main()
 	playerSprite.setPosition(playerSpawnPoint);
 
 	// Player Animaton
+	float playerMoveSpeedX = .15f;
+	float playerMoveSpeedY = .15f;
+
 	int playerAnimationFrame = 0;
 	sf::Clock playerClock;
 
 	// Sword Texture
-	bool sword = 0;
-
 	sf::Texture swordTexture;
 	if (!swordTexture.loadFromFile("image/SwordSlash.png"))
 	{
@@ -107,6 +102,11 @@ int main()
 	// Sword Position
 	sf::Vector2f swordSpawnPoint = { 150.f, 100.f };
 	swordSprite.setPosition(swordSpawnPoint);
+
+	// Sword animation
+	int swordAnimationFrame = 0;
+	sf::Clock swordClock;
+	float keyPressed = 0;
 
 	// Bat Player
 	sf::Texture batTexture;
@@ -129,7 +129,11 @@ int main()
 	batSprite.setPosition(batSpawnPoint);
 
 	// Bat Animaton
+	float batMoveSpeedX = .05f;
+	float batMoveSpeedY = .05f;
+
 	int batAnimationFrame = 0;
+	sf::Clock batClock;
 
 
 	// While Game is Running
@@ -233,7 +237,9 @@ int main()
 		}
 
 		// Sword Update
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && keyPressed >= 3)
+			keyPressed = 0;
+		if (keyPressed < 3 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		{
 			if (rectPlayer.left <= (playerSizeX * 3))
 			{
@@ -241,12 +247,38 @@ int main()
 				if (rectPlayer.top == (playerSizeY * 2))
 				{
 					swordSprite.setPosition(playerSprite.getPosition().x + 30.f, playerSprite.getPosition().y);
+					if (swordClock.getElapsedTime().asSeconds() > 0.1f)
+					{
+						if (rectSword.left == 249)
+						{
+							rectSword.left = 109;
+						}
+						else
+						{
+							rectSword.left += 70;
+						}
+						swordClock.restart();
+					}
+					swordSprite.setTextureRect(rectSword);
 				}
 				// Left
 				if (rectPlayer.top == (playerSizeY))
 				{
 					swordSprite.setPosition(playerSprite.getPosition().x, playerSprite.getPosition().y);
 					swordSprite.setScale(-0.8f, 1.2f);
+					if (swordClock.getElapsedTime().asSeconds() > 0.1f)
+					{
+						if (rectSword.left == 249)
+						{
+							rectSword.left = 109;
+						}
+						else
+						{
+							rectSword.left += 70;
+						}
+						swordClock.restart();
+					}
+					swordSprite.setTextureRect(rectSword);
 
 				}
 				// Top
@@ -254,6 +286,19 @@ int main()
 				{
 					swordSprite.setPosition(playerSprite.getPosition().x - 5.f, playerSprite.getPosition().y);
 					swordSprite.rotate(-90.f);
+					if (swordClock.getElapsedTime().asSeconds() > 0.1f)
+					{
+						if (rectSword.left == 249)
+						{
+							rectSword.left = 109;
+						}
+						else
+						{
+							rectSword.left += 70;
+						}
+						swordClock.restart();
+					}
+					swordSprite.setTextureRect(rectSword);
 				}
 				// Bottom
 				if (rectPlayer.top == 0)
@@ -261,37 +306,101 @@ int main()
 					swordSprite.setPosition(playerSprite.getPosition().x - 5.f, playerSprite.getPosition().y + 40.f);
 					swordSprite.rotate(-90.f);
 					swordSprite.setScale(-0.8f, 1.2f);
+					if (swordClock.getElapsedTime().asSeconds() > 0.1f)
+					{
+						if (rectSword.left == 249)
+						{
+							rectSword.left = 109;
+						}
+						else
+						{
+							rectSword.left += 70;
+						}
+						swordClock.restart();
+					}
+					swordSprite.setTextureRect(rectSword);
 				}
 				
 			}
+			keyPressed += swordClock.getElapsedTime().asSeconds();
 			window.draw(swordSprite);
 			swordSprite.setRotation(0.f);
 			swordSprite.setScale(0.8f, 1.2f);
 		}
 
-
 		// Bat Update
-
 		if (batSprite.getPosition().y < playerSprite.getPosition().y)
 		{
+			rectBat.top = 0;
 			batSprite.move(0.f, batMoveSpeedY);
-			batSprite.setTextureRect(sf::IntRect(batSizeX * batAnimationFrame, 0, batSizeX, batSizeY));
+			if (batClock.getElapsedTime().asSeconds() > 0.3f)
+			{
+				if (rectBat.left == (batSizeX * 2))
+				{
+					rectBat.left = 0;
+				}
+				else
+				{
+					rectBat.left += batSizeX;
+				}
+				batClock.restart();
+			}
+			batSprite.setTextureRect(rectBat);
 		}
 		else
 		{
+			rectBat.top = batSizeY * 3;
 			batSprite.move(0.f, -batMoveSpeedY);
-			batSprite.setTextureRect(sf::IntRect(batSizeX * batAnimationFrame, batSizeY * 3, batSizeX, batSizeY));
+			if (batClock.getElapsedTime().asSeconds() > 0.3f)
+			{
+				if (rectBat.left == (batSizeX * 2))
+				{
+					rectBat.left = 0;
+				}
+				else
+				{
+					rectBat.left += batSizeX;
+				}
+				batClock.restart();
+			}
+			batSprite.setTextureRect(rectBat);
 		}
 
 		if (batSprite.getPosition().x < playerSprite.getPosition().x)
 		{
+			rectBat.top = batSizeY * 2;
 			batSprite.move(batMoveSpeedX, 0.f);
-			batSprite.setTextureRect(sf::IntRect(batSizeX * batAnimationFrame, batSizeY * 2, batSizeX, batSizeY));
+			if (batClock.getElapsedTime().asSeconds() > 0.3f)
+			{
+				if (rectBat.left == (batSizeX * 2))
+				{
+					rectBat.left = 0;
+				}
+				else
+				{
+					rectBat.left += batSizeX;
+				}
+				batClock.restart();
+			}
+			batSprite.setTextureRect(rectBat);
 		}
 		else
 		{
+			rectBat.top = batSizeY;
 			batSprite.move(-batMoveSpeedX, 0.f);
-			batSprite.setTextureRect(sf::IntRect(batSizeX * batAnimationFrame, batSizeY * 1, batSizeX, batSizeY));
+			if (batClock.getElapsedTime().asSeconds() > 0.3f)
+			{
+				if (rectBat.left == (batSizeX * 2))
+				{
+					rectBat.left = 0;
+				}
+				else
+				{
+					rectBat.left += batSizeX;
+				}
+				batClock.restart();
+			}
+			batSprite.setTextureRect(rectBat);
 		}
 
 		batAnimationFrame++;
@@ -302,6 +411,7 @@ int main()
 		}
 
 		// Collision
+		// Player and Bat
 		if (batSprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds()))
 		{
 			if (rectHeart3.left == 0)
@@ -334,6 +444,11 @@ int main()
 		if (batSprite.getGlobalBounds().intersects(playerSprite.getGlobalBounds()))
 		{
 			playerSprite.setPosition(playerSpawnPoint);
+			batSprite.setPosition(batSpawnPoint);
+		}
+		// Sword and Bat
+		if (swordSprite.getGlobalBounds().intersects(batSprite.getGlobalBounds()))
+		{
 			batSprite.setPosition(batSpawnPoint);
 		}
 
