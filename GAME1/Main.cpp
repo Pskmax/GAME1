@@ -1,10 +1,18 @@
-//#include <iomanip>
-#include <iostream>
-#include <vector>
+#define _CRT_SECURE_NO_WARNINGS
+#define MAX_NUMBER_OF_ITEMS 8
+#define MAX2 2
+#define MAX3 3
+
 #include <ctime>
 #include <math.h>
-#include <fstream>
+#include<stdio.h>
+#include<utility>
+#include<algorithm>
+#include<string>
+#include<vector>
+#include<iostream>
 
+using namespace std;
 //SFML
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -12,11 +20,13 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
-#define MAX_NUMBER_OF_ITEMS 8
-
 int main()
 {
 	const float PI = 3.14159265;
+	int music = 0;
+	int played = 0;
+	float click = 0;
+	bool collect = 0;
 	bool swordBool = 0;
 	bool shield = 0;
 	bool stopwatch = 0;
@@ -52,6 +62,14 @@ int main()
 	int gun = 0;
 	int pBulletInt = 0;
 
+	float scoreCalculateA = 0;
+	float scoreCalculateB = 0;
+	float scoreCalculateC = 0;
+	float totalScore = 0;
+	bool scoreCheck = 0;
+	bool slimeS = 0;
+	bool batS = 0;
+
 	/* 
 		STAGE0 = map1
 		STAGE1 = map2
@@ -62,6 +80,7 @@ int main()
 		STAGE6 = How To Play
 		STAGE7 = High Score
 	*/
+
 	int STAGE = 3;
 
 	// Render Window
@@ -71,12 +90,15 @@ int main()
 
 	// Sound
 	sf::SoundBuffer epicBossFight;
+	sf::SoundBuffer victoryMusic;
 	if (!epicBossFight.loadFromFile("sound/Orchestral_Battle_Theme_1.ogg"));
+	if (!victoryMusic.loadFromFile("sound/Airship.ogg"));
 	sf::Sound epicBossFightBG;
+	sf::Sound victoryMusicBG;
 	epicBossFightBG.setBuffer(epicBossFight);
+	victoryMusicBG.setBuffer(victoryMusic);
+	victoryMusicBG.setVolume(20);
 	epicBossFightBG.setVolume(20);
-	epicBossFightBG.play();
-	epicBossFightBG.setLoop(true);
 
 	// Font
 	sf::Font font;
@@ -90,6 +112,7 @@ int main()
 	sf::Clock SWCDClock;
 
 	sf::Text how[MAX_NUMBER_OF_ITEMS];
+	sf::Text scoreNow[MAX3];
 
 	// Time
 	sf::Texture timeTexture;
@@ -105,6 +128,156 @@ int main()
 	sf::Mouse mouse;
 
 	// Score
+	float SCOREA = 0;
+	float SCOREB = 0;
+	float SCOREC = 0;
+	bool scoreStatus = 0;
+	bool scoreboardupdate = 0;
+	bool cantype = 0;
+	int playernamenow = 0;
+	char playername[20];
+	bool canbackspace = 0;
+	float backspacetime = 0;
+	sf::Text ClearTime;
+	ClearTime.setCharacterSize(45);
+	ClearTime.setFont(font);
+	ClearTime.setPosition(300, 200);
+	ClearTime.setString("Time : ");
+	ClearTime.setFillColor(sf::Color::Blue);
+	sf::Text CTime;
+	CTime.setCharacterSize(45);
+	CTime.setFont(font);
+	CTime.setPosition(500, 200);
+	CTime.setString("12345");
+	CTime.setFillColor(sf::Color::Red);
+	sf::Text EnterScore;
+	EnterScore.setCharacterSize(45);
+	EnterScore.setFont(font);
+	EnterScore.setPosition(300, 275);
+	EnterScore.setString("Score : ");
+	EnterScore.setFillColor(sf::Color::Blue);
+	sf::Text SCORENow;
+	SCORENow.setCharacterSize(45);
+	SCORENow.setFont(font);
+	SCORENow.setFillColor(sf::Color::Red);
+	SCORENow.setString("12345");
+	SCORENow.setPosition(500, 275);
+	sf::Text EnterName;
+	EnterName.setCharacterSize(45);
+	EnterName.setFont(font);
+	EnterName.setPosition(300, 350);
+	EnterName.setString("Name : ");
+	EnterName.setFillColor(sf::Color::Blue);
+	sf::Text name;
+	name.setCharacterSize(45);
+	name.setFont(font);
+	name.setPosition(500, 350);
+	name.setString("12345");
+	name.setFillColor(sf::Color::Blue);
+	sf::Text player1;
+	player1.setCharacterSize(50);
+	player1.setFont(font);
+	player1.setFillColor(sf::Color::Black);
+	player1.setString("Player");
+	player1.setPosition(200, 130);
+	sf::Text player2;
+	player2.setCharacterSize(50);
+	player2.setFont(font);
+	player2.setFillColor(sf::Color::Black);
+	player2.setString("Player");
+	player2.setPosition(200, 250);
+	sf::Text player3;
+	player3.setCharacterSize(50);
+	player3.setFont(font);
+	player3.setFillColor(sf::Color::Black);
+	player3.setString("Player");
+	player3.setPosition(200, 370);
+	sf::Text player4;
+	player4.setCharacterSize(50);
+	player4.setFont(font);
+	player4.setFillColor(sf::Color::Black);
+	player4.setString("Player");
+	player4.setPosition(200, 490);
+	sf::Text player5;
+	player5.setCharacterSize(50);
+	player5.setFont(font);
+	player5.setFillColor(sf::Color::Black);
+	player5.setString("Player");
+	player5.setPosition(200, 610);
+	sf::Text score1;
+	score1.setCharacterSize(50);
+	score1.setFont(font);
+	score1.setFillColor(sf::Color::Red);
+	score1.setString("12345");
+	score1.setPosition(800, 130);
+	sf::Text score2;
+	score2.setCharacterSize(50);
+	score2.setFont(font);
+	score2.setFillColor(sf::Color::Red);
+	score2.setString("12345");
+	score2.setPosition(800, 250);
+	sf::Text score3;
+	score3.setCharacterSize(50);
+	score3.setFont(font);
+	score3.setFillColor(sf::Color::Red);
+	score3.setString("12345");
+	score3.setPosition(800, 370);
+	sf::Text score4;
+	score4.setCharacterSize(50);
+	score4.setFont(font);
+	score4.setFillColor(sf::Color::Red);
+	score4.setString("12345");
+	score4.setPosition(800, 490);
+	sf::Text score5;
+	score5.setCharacterSize(50);
+	score5.setFont(font);
+	score5.setFillColor(sf::Color::Red);
+	score5.setString("12345");
+	score5.setPosition(800, 610);
+	//scoreboard
+	sf::Text scoreboardText;
+	scoreboardText.setCharacterSize(60);
+	scoreboardText.setFont(font);
+	scoreboardText.setFillColor(sf::Color::Blue);
+	scoreboardText.setString("Leader Board");
+	scoreboardText.setPosition(400, 10);
+	sf::Text no1;
+	no1.setCharacterSize(50);
+	no1.setFont(font);
+	no1.setFillColor(sf::Color::Black);
+	no1.setString("1.");
+	no1.setPosition(150, 130);
+	sf::Text no2;
+	no2.setCharacterSize(50);
+	no2.setFont(font);
+	no2.setFillColor(sf::Color::Black);
+	no2.setString("2.");
+	no2.setPosition(150, 250);
+	sf::Text no3;
+	no3.setCharacterSize(50);
+	no3.setFont(font);
+	no3.setFillColor(sf::Color::Black);
+	no3.setString("3.");
+	no3.setPosition(150, 370);
+	sf::Text no4;
+	no4.setCharacterSize(50);
+	no4.setFont(font);
+	no4.setFillColor(sf::Color::Black);
+	no4.setString("4.");
+	no4.setPosition(150, 490);
+	sf::Text no5;
+	no5.setCharacterSize(50);
+	no5.setFont(font);
+	no5.setFillColor(sf::Color::Black);
+	no5.setString("5.");
+	no5.setPosition(150, 610);
+
+	sf::Text credit;
+	credit.setCharacterSize(20);
+	credit.setFont(font);
+	credit.setFillColor(sf::Color::Blue);
+	credit.setString("Passakorn Kongboonkiat 63010750");
+	credit.setPosition(15.f, 695.f);
 
 	// Start Menu
 	sf::Texture menuTexture;
@@ -164,6 +337,11 @@ int main()
 	sf::Texture MAINMENUTexture;
 	if (!MAINMENUTexture.loadFromFile("image/MAIN_MENU.png"));
 	sf::Sprite MAINMENU(MAINMENUTexture);
+	sf::Sprite MAINMENU1(MAINMENUTexture);
+
+	sf::Texture SUBMITTexture;
+	if (!SUBMITTexture.loadFromFile("image/Submit.png"));
+	sf::Sprite SUBMIT(SUBMITTexture);
 	
 	// Game Over
 	// Win
@@ -172,7 +350,7 @@ int main()
 	sf::Sprite winSprite(winTexture);
 	winSprite.setScale(0.8f, 0.8f);
 	winSprite.setPosition((window.getSize().x / 2) - (winSprite.getScale().x * (winTexture.getSize().x / 2))
-		, (window.getSize().y / 2) - (winSprite.getScale().y * (winTexture.getSize().y / 2)));
+		, (window.getSize().y / 8) - (winSprite.getScale().y * (winTexture.getSize().y / 2)));
 
 	// Lose
 	sf::Texture gameOverTexture;
@@ -321,10 +499,10 @@ int main()
 
 	pBullet.setScale(0.02f, 0.02f);
 	pBullet.setPosition(NULL - 1000, NULL - 1000);
-	float pBulletX[50] = { NULL - 1000 };
-	float pBulletY[50] = { NULL - 1000 };
+	float pBulletX[110] = { NULL - 1000 };
+	float pBulletY[110] = { NULL - 1000 };
 	float cdpb = 0;
-	float pBulletDeg[50] = { 0 };
+	float pBulletDeg[110] = { 0 };
 
 	// Dragon Sprite (BOSS)
 	sf::Texture dragonTexture;
@@ -493,7 +671,6 @@ int main()
 
 	sf::IntRect rectItemBox(0, 0, itemBoxSizeX, itemBoxSizeY);
 	sf::Sprite itemBoxSprite(itemBoxTexture, rectItemBox);
-	itemBoxSprite.setTexture(itemBoxTexture);
 	itemBoxSprite.setScale(0.1f, 0.1f);
 
 	sf::Vector2f itemBoxSpawnpoint = { 350.f, 600.f };
@@ -520,7 +697,6 @@ int main()
 	sf::Sprite stopwatchSprite(stopwatchTexture);
 	stopwatchSprite.setScale(0.2f, 0.2f);
 	stopwatchSprite.setPosition(970.f, 10.f);
-
 	sf::Clock stopwatchClock;
 
 	// Time Stop BG
@@ -529,6 +705,29 @@ int main()
 
 	sf::IntRect rectTimeStopBG(0, 0, 1080, 720);
 	sf::Sprite timeStopSprite(timeStopBGTexture);
+
+	// Item Drop Potion
+	sf::Texture potionTexture;
+	if(!potionTexture.loadFromFile("image/Potion.png"));
+	sf::IntRect rectPotion(0, 0, 864, 1022);
+	sf::Sprite potion(potionTexture, rectPotion);
+	potion.setScale(0.035f, 0.035f);
+
+	// 0
+	sf::Texture potionTexture0;
+	if (!potionTexture0.loadFromFile("image/Potion.png"));
+	sf::IntRect rectPotion0(0, 0, 864, 1022);
+	sf::Sprite potion0(potionTexture0, rectPotion0);
+	potion0.setScale(0.04f, 0.04f);
+	potion0.setPosition(530.f, 485.f);
+
+	sf::Sprite shield0(shieldTexture, rectShield);
+	shield0.setScale(0.1f, 0.1f);
+	shield0.setPosition(50.f, 570.f);
+
+	sf::Sprite itemBox0(itemBoxTexture, rectItemBox);
+	itemBox0.setScale(0.1f, 0.1f);
+	itemBox0.setPosition(530.f, 590.f);
 
 	// Random
 	sf::Clock random;
@@ -567,7 +766,6 @@ int main()
 			}
 			window.draw(hitBox);
 			window.draw(stage0Sprite);
-			window.draw(itemBoxSprite);
 			if(batHealth > 0) window.draw(batSprite);
 			if(slimeHealth > 0) window.draw(slimeSprite);
 			window.draw(playerSprite);
@@ -576,6 +774,39 @@ int main()
 			window.draw(skeletonSprite2);
 			if (pause == 0)
 			{
+				// Potion Drop
+				
+				for (int i = 0; i < collect; i++)
+				{
+					window.draw(potion);
+				}
+				if (collect == 1)
+				{
+					if (playerSprite.getGlobalBounds().intersects(potion.getGlobalBounds()))
+					{
+						if (playerHealthStatus >= 4) playerHealthStatus = 4;
+						else playerHealthStatus++;
+						collect = 0;
+					}
+				}
+				if (batHealth == 0)
+				{
+					potion.setPosition(batSprite.getPosition());
+					if (randomEffects == 1 || randomEffects == 3 || randomEffects == 5 || randomEffects == 7 || randomEffects == 9)
+					{
+						collect = 1;
+					}
+					batHealth = -1;
+				}
+				if (slimeHealth == 0)
+				{
+					potion.setPosition(slimeSprite.getPosition());
+					if (randomEffects == 1 || randomEffects == 3 || randomEffects == 5 || randomEffects == 7 || randomEffects == 9)
+					{
+						collect = 1;
+					}
+					slimeHealth = -1;
+				}
 				// Bat Health Bar
 				if (batHealth > 0)
 				{
@@ -595,7 +826,7 @@ int main()
 					window.draw(batHeartSprite);
 				}
 				// Slime Health Bar
-				if (slimeHealth)
+				if (slimeHealth > 0)
 				{
 					for (int i = 0; i < 3; i++)
 					{
@@ -699,10 +930,13 @@ int main()
 
 					// Collision
 					// Player and Slime
-					if (slimeSprite.getGlobalBounds().intersects(hitBox.getGlobalBounds()) && immune < 0)
+					if (slimeHealth > 0)
 					{
-						playerHealthStatus--;
-						immune = 3;
+						if (slimeSprite.getGlobalBounds().intersects(hitBox.getGlobalBounds()) && immune < 0)
+						{
+							playerHealthStatus--;
+							immune = 3;
+						}
 					}
 				}
 				// Skeleton Update
@@ -869,6 +1103,7 @@ int main()
 				{
 					if (sword.getGlobalBounds().intersects(batSprite.getGlobalBounds()) && batImmune < 0)
 					{
+						if (batHealth == 1) batS++;
 						batHealth--;
 						batImmune = 1;
 					}
@@ -879,6 +1114,7 @@ int main()
 				{
 					if (sword.getGlobalBounds().intersects(slimeSprite.getGlobalBounds()) && slimeImmune < 0)
 					{
+						if (slimeHealth == 1) slimeS++;
 						slimeHealth--;
 						slimeImmune = 1;
 					}
@@ -887,6 +1123,7 @@ int main()
 				// Sword Wave and Bat
 				if (swordWaveSprite.getGlobalBounds().intersects(batSprite.getGlobalBounds()) && batImmune < 0)
 				{
+					if (batHealth == 1) batS++;
 					swordWaveSprite.setPosition(NULL - 1000, NULL - 1000);
 					batHealth--;
 					batImmune = 1;
@@ -895,6 +1132,7 @@ int main()
 				// Sword Wave and Slime
 				if (swordWaveSprite.getGlobalBounds().intersects(slimeSprite.getGlobalBounds()) && slimeImmune < 0)
 				{
+					if (slimeHealth == 1) slimeS++;
 					swordWaveSprite.setPosition(NULL - 1000, NULL - 1000);
 					slimeHealth--;
 					slimeImmune = 1;
@@ -903,25 +1141,27 @@ int main()
 				// Bat and Shield
 				if (shieldSprite.getGlobalBounds().intersects(batSprite.getGlobalBounds()))
 				{
+					if (batHealth == 1) batS++;
 					shieldSprite.setPosition(NULL - 1000, NULL - 1000);
 					if (batSprite.getPosition().y < playerSprite.getPosition().y) batSprite.setPosition(batSprite.getPosition().x, batSprite.getPosition().y - 20);
 					if (batSprite.getPosition().y > playerSprite.getPosition().y) batSprite.setPosition(batSprite.getPosition().x, batSprite.getPosition().y + 20);
 					if (batSprite.getPosition().x < playerSprite.getPosition().x) batSprite.setPosition(batSprite.getPosition().x - 20, batSprite.getPosition().y);
 					if (batSprite.getPosition().x > playerSprite.getPosition().x) batSprite.setPosition(batSprite.getPosition().x + 20, batSprite.getPosition().y);
 					batHealth--;
-					shield = 0;
+					if (batHealth > 0) shield = 0;
 				}
 
 				// Slime and Shield
 				if (shieldSprite.getGlobalBounds().intersects(slimeSprite.getGlobalBounds()))
 				{
+					if (slimeHealth == 1) slimeS++;
 					shieldSprite.setPosition(NULL - 1000, NULL - 1000);
 					if (slimeSprite.getPosition().y < playerSprite.getPosition().y) slimeSprite.setPosition(slimeSprite.getPosition().x, slimeSprite.getPosition().y - 20);
 					if (slimeSprite.getPosition().y > playerSprite.getPosition().y) slimeSprite.setPosition(slimeSprite.getPosition().x, slimeSprite.getPosition().y + 20);
 					if (slimeSprite.getPosition().x < playerSprite.getPosition().x) slimeSprite.setPosition(slimeSprite.getPosition().x - 20, slimeSprite.getPosition().y);
 					if (slimeSprite.getPosition().x > playerSprite.getPosition().x) slimeSprite.setPosition(slimeSprite.getPosition().x + 20, slimeSprite.getPosition().y);
 					slimeHealth--;
-					shield = 0;
+					if(slimeHealth > 0) shield = 0;
 				}
 			}
 		}
@@ -937,130 +1177,133 @@ int main()
 			window.draw(dragonBarSprite);
 			window.draw(gunItem);
 
+			// Dragon Health Bar
+			for (float i = 0; i < dragonHealth; i++)
+			{
+				if (i <= 280)
+				{
+					dragonBarRSprite.setPosition(1042.5f - i, 668.f);
+					window.draw(dragonBarRSprite);
+				}
+			}
+
 			if (pause == 0)
 			{
-				// Dragon Health Bar
-				for (float i = 0; i < dragonHealth; i++)
-				{
-					if (i <= 280)
-					{
-						dragonBarRSprite.setPosition(1042.5f - i, 668.f);
-						window.draw(dragonBarRSprite);
-					}
-				}
 
 				// Boss Bullet
-				if (bulletNow > 1000)
-					bulletNow = 0;
-				for (int i = 0; i < 1100; i++)
+				if (dragonHealth <= 280)
 				{
-					if (bulletX[i] == NULL - 1000 && bulletY[i] == NULL - 1000)
-						continue;
-					if (stopwatch == 0)
+					if (bulletNow > 1000)
+						bulletNow = 0;
+					for (int i = 0; i < 1100; i++)
 					{
-						bulletX[i] = bulletX[i] + (deltaTime1.asSeconds() * 150) * cos(bulletDeg[i]);
-						bulletY[i] = bulletY[i] + (deltaTime1.asSeconds() * 150) * sin(bulletDeg[i]);
-					}
-					if (bulletX[i] > 1080 || bulletX[i] < 0 || bulletY[i] < 0 || bulletY[i] > 720)
-					{
-						bulletX[i] = (NULL - 1000);
-						bulletY[i] = (NULL - 1000);
-					}
-					bullet.setPosition(bulletX[i],bulletY[i]);
-					bulletCircle.setPosition(bulletX[i] + 1.5, bulletY[i] + 1.5);
-
-					window.draw(bullet);
-
-					// Player and Bullet
-					if (hitBox.getGlobalBounds().intersects(bulletCircle.getGlobalBounds()) && immune < 0)
-					{
-						if (shield == 0) playerHealthStatus--;
-						if (shield == 1) shield = 0;
-						bossBullet = 0;
-						bulletX[i] = (NULL - 1000);
-						bulletY[i] = (NULL - 1000);
-						immune = 3;
-					}
-				}
-				if (stopwatch == 0)
-				{
-					if (cdr <= 0)
-					{
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (0) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (PI / 4) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (2 * PI / 4) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (3 * PI / 4) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (4 * PI / 4) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (5 * PI / 4) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (6 * PI / 4) + degChange;
-						bulletNow++;
-						bulletX[bulletNow] = 780;
-						bulletY[bulletNow] = 250;
-						bulletDeg[bulletNow] = (7 * PI / 4) + degChange;
-						degChange = degChange + 0.3f;
-						bulletNow++;
-						cdr = 0.3;
-
-						if (dragonHealth > 70)
+						if (bulletX[i] == NULL - 1000 && bulletY[i] == NULL - 1000)
+							continue;
+						if (stopwatch == 0)
 						{
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (3 * PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (5 * PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (7 * PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (9 * PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (11 * PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (13 * PI / 8) + degChange;
-							bulletNow++;
-							bulletX[bulletNow] = 780;
-							bulletY[bulletNow] = 250;
-							bulletDeg[bulletNow] = (15 * PI / 8) + degChange;
-							bulletNow++;
+							bulletX[i] = bulletX[i] + (deltaTime1.asSeconds() * 150) * cos(bulletDeg[i]);
+							bulletY[i] = bulletY[i] + (deltaTime1.asSeconds() * 150) * sin(bulletDeg[i]);
+						}
+						if (bulletX[i] >= 1080 || bulletX[i] <= 0 || bulletY[i] <= 0 || bulletY[i] >= 720)
+						{
+							bulletX[i] = (NULL - 1000);
+							bulletY[i] = (NULL - 1000);
+						}
+						bullet.setPosition(bulletX[i], bulletY[i]);
+						bulletCircle.setPosition(bulletX[i] + 1.5, bulletY[i] + 1.5);
+
+						window.draw(bullet);
+
+						// Player and Bullet
+						if (hitBox.getGlobalBounds().intersects(bulletCircle.getGlobalBounds()) && immune < 0)
+						{
+							if (shield == 0) playerHealthStatus--;
+							if (shield == 1) shield = 0;
+							bossBullet = 0;
+							bulletX[i] = (NULL - 1000);
+							bulletY[i] = (NULL - 1000);
+							immune = 3;
 						}
 					}
-					else cdr -= deltaTime1.asSeconds();
-				}
+					if (stopwatch == 0)
+					{
+						if (cdr <= 0)
+						{
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (0) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (PI / 4) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (2 * PI / 4) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (3 * PI / 4) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (4 * PI / 4) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (5 * PI / 4) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (6 * PI / 4) + degChange;
+							bulletNow++;
+							bulletX[bulletNow] = 780;
+							bulletY[bulletNow] = 250;
+							bulletDeg[bulletNow] = (7 * PI / 4) + degChange;
+							degChange = degChange + 0.3f;
+							bulletNow++;
+							cdr = 0.3;
 
+							if (dragonHealth > 70)
+							{
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (3 * PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (5 * PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (7 * PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (9 * PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (11 * PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (13 * PI / 8) + degChange;
+								bulletNow++;
+								bulletX[bulletNow] = 780;
+								bulletY[bulletNow] = 250;
+								bulletDeg[bulletNow] = (15 * PI / 8) + degChange;
+								bulletNow++;
+							}
+						}
+						else cdr -= deltaTime1.asSeconds();
+					}
+				}
 				// Dragon Laser
 				if (dragonHealth < 140)
 				{
@@ -1160,6 +1403,20 @@ int main()
 		// Player Update
 		if (STAGE == 0 || STAGE == 1 || STAGE == 2)
 		{
+			// Player Health Bar
+			for (int i = 0; i < playerHealthStatus; i++)
+			{
+				if (i < 4)
+				{
+					sf::IntRect rectHealthBar1(healthBarSizeX1 * (2 * i), 0, healthBarSizeX1, healthBarSizeY1);
+					sf::Sprite healthBarSprite1(healthBarTexture1, rectHealthBar1);
+					healthBarSprite1.setTexture(healthBarTexture1);
+					healthBarSprite1.setScale(0.2f, 0.2f);
+					healthBarSprite1.setPosition(healthBarPosX - (2 * i), healthBarPosY);
+					window.draw(healthBarSprite1);
+				}
+			}
+
 			if (pause == 0)
 			{
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && playerSprite.getPosition().y > 20 && !sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -1241,7 +1498,6 @@ int main()
 				if (!sf::Keyboard::isKeyPressed(sf::Keyboard::W) && !sf::Keyboard::isKeyPressed(sf::Keyboard::A)
 					&& !sf::Keyboard::isKeyPressed(sf::Keyboard::S) && !sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 				{
-					rectPlayer.top = 0;
 					rectPlayer.left = 0;
 					playerSprite.setTextureRect(rectPlayer);
 				}
@@ -1255,20 +1511,6 @@ int main()
 
 				// Player Hit Box
 				hitBox.setPosition(playerSprite.getPosition().x + 14.2, playerSprite.getPosition().y + 26);
-
-				// Player Health Bar
-				for (int i = 0; i < playerHealthStatus; i++)
-				{
-					if (i < 4)
-					{
-						sf::IntRect rectHealthBar1(healthBarSizeX1 * (2 * i), 0, healthBarSizeX1, healthBarSizeY1);
-						sf::Sprite healthBarSprite1(healthBarTexture1, rectHealthBar1);
-						healthBarSprite1.setTexture(healthBarTexture1);
-						healthBarSprite1.setScale(0.2f, 0.2f);
-						healthBarSprite1.setPosition(healthBarPosX - (2 * i), healthBarPosY);
-						window.draw(healthBarSprite1);
-					}
-				}
 
 				// Dragon Update
 					// Dragon Animation
@@ -1293,22 +1535,25 @@ int main()
 				}
 
 				// Collect Item
-				if (playerSprite.getGlobalBounds().intersects(itemBoxSprite.getGlobalBounds()))
+				if (STAGE == 2)
 				{
-					itemBoxSprite.setPosition(NULL - 1000, NULL - 1000);
-					if (randomEffects == 1 || randomEffects == 2)
+					if (playerSprite.getGlobalBounds().intersects(itemBoxSprite.getGlobalBounds()))
 					{
-						stopwatch = 1;
-					}
-					else if (randomEffects == 3 || randomEffects == 4 || randomEffects == 5 || randomEffects == 6)
-					{
-						shield = 1;
-					}
-					// Potion
-					else if (randomEffects == 7 || randomEffects == 8 || randomEffects == 9 || randomEffects == 10)
-					{
-						if (playerHealthStatus <= 3) playerHealthStatus++;
-						else playerHealthStatus = playerHealthStatus;
+						itemBoxSprite.setPosition(NULL - 1000, NULL - 1000);
+						if (randomEffects == 1 || randomEffects == 2)
+						{
+							stopwatch = 1;
+						}
+						else if (randomEffects == 3 || randomEffects == 4 || randomEffects == 5 || randomEffects == 6)
+						{
+							shield = 1;
+						}
+						// Potion
+						else if (randomEffects == 7 || randomEffects == 8 || randomEffects == 9 || randomEffects == 10)
+						{
+							if (playerHealthStatus <= 3) playerHealthStatus++;
+							else playerHealthStatus = playerHealthStatus;
+						}
 					}
 				}
 
@@ -1407,9 +1652,9 @@ int main()
 					gunSprite.setPosition(playerSprite.getPosition().x + playerTexture.getSize().x / 8, playerSprite.getPosition().y + playerTexture.getSize().y / 6);
 					// Player Bullet Gun
 					float slope = atan(dY / dX);
-					if (pBulletNow > 40)
+					if (pBulletNow > 100)
 						pBulletNow = 0;
-					for (int i = 0; i < 50; i++)
+					for (int i = 0; i < 110; i++)
 					{
 						if (pBulletX[i] == NULL - 1000 && pBulletY[i] == NULL - 1000)
 							continue;
@@ -1505,7 +1750,7 @@ int main()
 			sword0 -= deltaTime1.asSeconds();
 
 			// Time
-			if (pause == 1)
+			if (pause == 1 || STAGE == 4)
 			{
 				deltaTime1 = timeClock.restart().Zero;
 			}
@@ -1513,12 +1758,12 @@ int main()
 			{
 				deltaTime1 = timeClock.restart();
 				timeCount.setString(std::to_string(timeC));
+				CTime.setString(std::to_string(timeC));
 				timeC = timeC + deltaTime1.asSeconds();
 			}
 			window.draw(timeCount);
 
 			// Pause Menu
-			std::cout << "X = " << mouse.getPosition(window).x << " Y = " << mouse.getPosition(window).y << std::endl;
 			if (pause == 1)
 			{
 				// RESUME
@@ -1550,6 +1795,27 @@ int main()
 					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
 						STAGE = 0;
+
+						SCOREA = 0;
+						SCOREB = 0;
+						SCOREC = 0;
+
+						cantype = 0;
+						playernamenow = 0;
+						playername[20];
+						canbackspace = 0;
+						totalScore = 0;
+						scoreCheck = 0;
+						slimeS = 0;
+						batS = 0;
+						scoreStatus = 0;
+						scoreboardupdate = 0;
+						cantype = 0;
+						playernamenow = 0;
+						playername[20];
+						canbackspace = 0;
+						backspacetime = 0;
+
 						sword0 = 0;
 						shield = 0;
 						stopwatch = 0;
@@ -1584,9 +1850,9 @@ int main()
 						skeletonHealth = 3;
 						dragonHealth = 0;
 						playerAnimationFrame = 0;
-						for (int i = 0; i < 50; i++)
+						for (int i = 0; i < 110; i++)
 						{
-							if (i == 50) i = 0;
+							if (i == 110) i = 0;
 							pBulletX[i] = { NULL - 1000 };
 							pBulletY[i] = { NULL - 1000 };
 							pBulletDeg[i] = { 0 };
@@ -1642,6 +1908,96 @@ int main()
 					{
 						pause = 0;
 						STAGE = 3;
+
+						SCOREA = 0;
+						SCOREB = 0;
+						SCOREC = 0;
+
+						cantype = 0;
+						playernamenow = 0;
+						playername[20];
+						canbackspace = 0;
+						totalScore = 0;
+						scoreCheck = 0;
+						slimeS = 0;
+						batS = 0;
+						scoreStatus = 0;
+						scoreboardupdate = 0;
+						cantype = 0;
+						playernamenow = 0;
+						playername[20];
+						canbackspace = 0;
+						backspacetime = 0;
+
+						sword0 = 0;
+						shield = 0;
+						stopwatch = 0;
+						keyPressed = 0;
+						bossBullet = 0;
+						swordStatus = 0;
+						weaponStatus = 0;
+						beam = 0;
+						laserStatus = 3;
+						SWCD = 5;
+						immune = 0;
+						immuneBlink = 0;
+						batImmune = 0;
+						slimeImmune = 0;
+						dragonImmune = 0;
+						weaponSwap = 0;
+						sword0 = 0;
+						weaponsType = 0;
+						bulletNow = 0;
+						arrowNow = 0;
+						pBulletNow = 0;
+						pBulletStatus = 0;
+						timeC = 0;
+						pause = 0;
+						check1 = 0;
+						check2 = 0;
+						gun = 0;
+						pBulletInt = 0;
+						playerHealthStatus = 4;
+						batHealth = 3;
+						slimeHealth = 3;
+						skeletonHealth = 3;
+						dragonHealth = 0;
+						playerAnimationFrame = 0;
+						for (int i = 0; i < 110; i++)
+						{
+							if (i == 110) i = 0;
+							pBulletX[i] = { NULL - 1000 };
+							pBulletY[i] = { NULL - 1000 };
+							pBulletDeg[i] = { 0 };
+						}
+						cdpb = 0;
+						a = 200;
+						dragonPosY = 0.0;
+						dragonCount = 0;
+						for (int i = 0; i < 1100; i++)
+						{
+							if (i == 1100) i = 0;
+							bulletX[i] = { NULL - 1000 };
+							bulletY[i] = { NULL - 1000 };
+							bulletDeg[i] = { 0 };
+						}
+						cdr = 0;
+						degChange = 0;
+						for (int i = 0; i < 10; i++)
+						{
+							if (i == 10) i = 0;
+							arrowX[i] = { NULL - 1000 };
+							arrowY[i] = { NULL - 1000 };
+						}
+						cda = 0;
+						batAnimationFrame = 0;
+						playerSprite.setPosition(playerSpawnPoint);
+						pBullet.setPosition(NULL - 1000, NULL - 1000);
+						dragonSprite.setPosition(dragonSpawnpoint);
+						chargeBeamSprite.setPosition(780.f, 250.f);
+						batSprite.setPosition(batSpawnPoint);
+						slimeSprite.setPosition(slimeSpawnPoint);
+						itemBoxSprite.setPosition(itemBoxSpawnpoint);
 					}
 					MAINMENU.setScale(0.35f, 0.35f);
 					MAINMENU.setColor(sf::Color(255, 255, 255, 255));
@@ -1676,7 +2032,7 @@ int main()
 
 			// PLAY
 			if (mouse.getPosition(window).x > 460 && mouse.getPosition(window).x < 625
-				&& mouse.getPosition(window).y > 245 && mouse.getPosition(window).y < 310)
+				&& mouse.getPosition(window).y > 246 && mouse.getPosition(window).y < 311)
 			{
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
@@ -1690,11 +2046,11 @@ int main()
 			}
 			
 			play0.setPosition((window.getSize().x / 2) - ((playTexture.getSize().x / 2) * play0.getScale().x)
-				, ((window.getSize().y * 2.3)/ 6) - ((playTexture.getSize().y / 2) * play0.getScale().y));
+				, ((window.getSize().y * 2.4)/ 6) - ((playTexture.getSize().y / 2) * play0.getScale().y));
 
 			// HOW TO PLAY
 			if (mouse.getPosition(window).x > 340 && mouse.getPosition(window).x < 745
-				&& mouse.getPosition(window).y > 351 && mouse.getPosition(window).y < 415)
+				&& mouse.getPosition(window).y > 356 && mouse.getPosition(window).y < 420)
 			{
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
@@ -1708,15 +2064,15 @@ int main()
 			}
 
 			howToPlay0.setPosition((window.getSize().x / 2) - ((howToPlayTexture.getSize().x / 2) * howToPlay0.getScale().x)
-				, ((window.getSize().y * 3.2) / 6) - ((howToPlayTexture.getSize().y / 2) * howToPlay0.getScale().y));
+				, ((window.getSize().y * 3.3) / 6) - ((howToPlayTexture.getSize().y / 2) * howToPlay0.getScale().y));
 			
 			// HIGH SCORE
 			if (mouse.getPosition(window).x > 365 && mouse.getPosition(window).x < 715
-				&& mouse.getPosition(window).y > 475 && mouse.getPosition(window).y < 535)
+				&& mouse.getPosition(window).y > 497 && mouse.getPosition(window).y < 542)
 			{
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
-					
+					STAGE = 7;
 				}
 				highScore0.setScale(0.7f, 0.7f);
 			}
@@ -1726,11 +2082,11 @@ int main()
 			}
 
 			highScore0.setPosition((window.getSize().x / 2) - ((highScoreTexture.getSize().x / 2) * highScore0.getScale().x)
-				, ((window.getSize().y * 4.2) / 6) - ((highScoreTexture.getSize().y / 2) * highScore0.getScale().y));
+				, ((window.getSize().y * 4.3) / 6) - ((highScoreTexture.getSize().y / 2) * highScore0.getScale().y));
 
 			// EXIT
 			if (mouse.getPosition(window).x > 475 && mouse.getPosition(window).x < 610
-				&& mouse.getPosition(window).y > 595 && mouse.getPosition(window).y < 655)
+				&& mouse.getPosition(window).y > 600 && mouse.getPosition(window).y < 660)
 			{
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
@@ -1744,7 +2100,7 @@ int main()
 			}
 
 			exit0.setPosition((window.getSize().x / 2) - ((exitTexture.getSize().x / 2) * exit0.getScale().x)
-				, ((window.getSize().y * 5.2) / 6) - ((exitTexture.getSize().y / 2) * exit0.getScale().y));
+				, ((window.getSize().y * 5.3) / 6) - ((exitTexture.getSize().y / 2) * exit0.getScale().y));
 
 			window.draw(menu);
 			window.draw(REVERSE0);
@@ -1752,14 +2108,18 @@ int main()
 			window.draw(howToPlay0);
 			window.draw(highScore0);
 			window.draw(exit0);
+			window.draw(credit);
 		}
 		// How To Play
 		if (STAGE == 6)
 		{
 			window.draw(menu);
 			window.draw(gunSprite0);
+			window.draw(potion0);
+			window.draw(shield0);
+			window.draw(itemBox0);
 			window.draw(player0);
-			std::cout << "X = " << mouse.getPosition(window).x << " Y = " << mouse.getPosition(window).y << std::endl;
+
 			if (mouse.getPosition(window).x > 35 && mouse.getPosition(window).x < 110
 				&& mouse.getPosition(window).y > 15 && mouse.getPosition(window).y < 80)
 			{
@@ -1800,7 +2160,7 @@ int main()
 				how[3].setCharacterSize(35.f);
 				how[3].setFont(font);
 				how[3].setFillColor(sf::Color::Black);
-				how[3].setString("ESE = Pause");
+				how[3].setString("ESC = Pause");
 				how[3].setPosition(sf::Vector2f(window.getSize().x / 2, window.getSize().y / (MAX_NUMBER_OF_ITEMS + 1) * 4.8));
 
 				how[4].setCharacterSize(35.f);
@@ -1813,7 +2173,7 @@ int main()
 				how[5].setFont(font);
 				how[5].setFillColor(sf::Color::Blue);
 				how[5].setString("Healing potion");
-				how[5].setPosition(sf::Vector2f((window.getSize().x * 5) / 8, window.getSize().y / (MAX_NUMBER_OF_ITEMS + 1) * 6));
+				how[5].setPosition(sf::Vector2f((window.getSize().x * 4.5) / 8, window.getSize().y / (MAX_NUMBER_OF_ITEMS + 1) * 6));
 
 				how[6].setCharacterSize(35.f);
 				how[6].setFont(font);
@@ -1824,108 +2184,462 @@ int main()
 				how[7].setCharacterSize(35.f);
 				how[7].setFont(font);
 				how[7].setFillColor(sf::Color::Blue);
-				how[7].setString("Stop everything 3 second\n(except you)");
-				how[7].setPosition(sf::Vector2f((window.getSize().x * 5) / 8, window.getSize().y / (MAX_NUMBER_OF_ITEMS + 1) * 7.2));
+				how[7].setString("Random Item Box\n(Potion / Shield / Stopwatch)");
+				how[7].setPosition(sf::Vector2f((window.getSize().x * 4.5) / 8, window.getSize().y / (MAX_NUMBER_OF_ITEMS + 1) * 7.2));
 
 				window.draw(how[i]);
 			}
+		}
+
+		// HIGH SCORE
+		if (STAGE == 7)
+		{
+			window.draw(menu);
+
+			if (mouse.getPosition(window).x > 35 && mouse.getPosition(window).x < 110
+				&& mouse.getPosition(window).y > 15 && mouse.getPosition(window).y < 80)
+			{
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				{
+					STAGE = 3;
+				}
+				backward.setScale(0.16f, 0.16f);
+			}
+			else
+			{
+				backward.setScale(0.12f, 0.12f);
+			}
+			backward.setPosition((window.getPosition().x / 10) - ((backwardTexture.getSize().x / 10) * backward.getScale().x)
+				, (window.getPosition().y / 10) - ((backwardTexture.getSize().y / 10) * backward.getScale().y));
+			window.draw(backward);
+
+			//update
+			if (scoreboardupdate == 0)
+			{
+				char temp[256];
+				FILE* fp;
+				string leaderboardname[5];
+				int leaderboardscore[5];
+				fp = fopen("./score.txt", "r");
+				for (int i = 0; i < 5; i++)
+				{
+					fscanf(fp, "%s", &temp);
+					leaderboardname[i] = temp;
+					fscanf(fp, "%d", &leaderboardscore[i]);
+				}
+				player1.setString(leaderboardname[0]);
+				player2.setString(leaderboardname[1]);
+				player3.setString(leaderboardname[2]);
+				player4.setString(leaderboardname[3]);
+				player5.setString(leaderboardname[4]);
+				score1.setString(to_string(leaderboardscore[0]));
+				score2.setString(to_string(leaderboardscore[1]));
+				score3.setString(to_string(leaderboardscore[2]));
+				score4.setString(to_string(leaderboardscore[3]));
+				score5.setString(to_string(leaderboardscore[4]));
+				scoreboardupdate = 1;
+			}
+			window.draw(scoreboardText);
+			window.draw(no1);
+			window.draw(no2);
+			window.draw(no3);
+			window.draw(no4);
+			window.draw(no5);
+			window.draw(player1);
+			window.draw(player2);
+			window.draw(player3);
+			window.draw(player4);
+			window.draw(player5);
+			window.draw(score1);
+			window.draw(score2);
+			window.draw(score3);
+			window.draw(score4);
+			window.draw(score5);
+		}
+
+		// Calculate Score
+		if (STAGE == 4 && scoreCheck == 0)
+		{
+			if (batS == 1) SCOREA = 100; // bat
+			if (slimeS == 1) SCOREB = 100; // slime
+			SCOREC = 5000; // dragon
+			scoreCalculateA = SCOREA * 150; // total bat score
+			scoreCalculateB = SCOREB * 100; // total slime score
+			scoreCalculateC = SCOREC * 200; // total dragon score
+			totalScore = (100 * (SCOREA + SCOREB + SCOREC)) / timeC; // total score
+			scoreCheck = 1;
 		}
 		// End Game
 		// win
 		if (dragonHealth > 280) STAGE = 4;
 		if (STAGE == 4)
 		{
-			window.clear();
+			SCORENow.setString(to_string(int(totalScore)));
+			window.draw(menu);
 			window.draw(winSprite);
+			window.draw(EnterScore);
+			window.draw(ClearTime);
+			window.draw(CTime);
+			window.draw(SCORENow);
+			window.draw(EnterName);
+			window.draw(name);
+
+			//name input
+			if (event.type != sf::Event::TextEntered) cantype = 1;
+			if (event.type == sf::Event::TextEntered && cantype == 1)
+			{
+				if (event.text.unicode < 128)
+				{
+					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace) && playernamenow < 14) {
+						playername[playernamenow] = static_cast<char>(event.text.unicode);
+						playernamenow++;
+					}
+				}
+				cantype = 0;
+			}
+			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace)) canbackspace = 1;
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace) && canbackspace == 1)
+			{
+				if (playernamenow > 0) {
+					playernamenow--;
+					playername[playernamenow] = '\0';
+					canbackspace = 0;
+				}
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace))
+			{
+				backspacetime += deltaTime1.asSeconds();
+			}
+			else backspacetime = 0;
+			if (backspacetime > 0.5)
+			{
+				for (int i = 0; i < 15; i++)
+				{
+					playername[i] = '\0';
+				}
+				playernamenow = 0;
+			}
+			name.setString(playername);
+			printf("%s %d\n", playername, playernamenow);
+			sf::Vector2i position = sf::Mouse::getPosition(window);
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)
+				&& mouse.getPosition(window).x > 50 && mouse.getPosition(window).x < 218
+				&& mouse.getPosition(window).y > 613 && mouse.getPosition(window).y < 663)
+			{
+				char temp[256];
+				FILE* fp;
+				string leaderboardname[6];
+				int leaderboardscore[6];
+				vector <pair<int, string>> sorting;
+				fp = fopen("./score.txt", "r");
+				for (int i = 0; i < 5; i++)
+				{
+					fscanf(fp, "%s", &temp);
+					leaderboardname[i] = temp;
+					fscanf(fp, "%d", &leaderboardscore[i]);
+					sorting.push_back(make_pair(leaderboardscore[i], leaderboardname[i]));
+				}
+				leaderboardname[5] = playername;
+				leaderboardscore[5] = totalScore;
+				sorting.push_back(make_pair(leaderboardscore[5], leaderboardname[5]));
+				sort(sorting.begin(), sorting.end());
+				for (int i = 0; i < 6; i++)
+				{
+					cout << sorting[i].second << " " << sorting[i].first << endl;
+				}
+				fclose(fp);
+				fp = fopen("./score.txt", "w");
+				for (int i = 5; i > 0; i--)
+				{
+					strcpy(temp, sorting[i].second.c_str());
+					fprintf(fp, "%s %d\n", temp, sorting[i].first);
+				}
+				fclose(fp);
+				STAGE = 3;
+				scoreboardupdate = 0;
+				for (int i = 0; i < 15; i++)
+					playername[i] = { NULL };
+			}
+			
+			// SUBMIT
+			if (mouse.getPosition(window).x > 50 && mouse.getPosition(window).x < 218
+				&& mouse.getPosition(window).y > 613 && mouse.getPosition(window).y < 663)
+			{
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				{
+					STAGE = 3;
+
+					SCOREA = 0;
+					SCOREB = 0;
+					SCOREC = 0;
+
+					cantype = 0;
+					playernamenow = 0;
+					playername[20];
+					canbackspace = 0;
+					totalScore = 0;
+					scoreCheck = 0;
+					slimeS = 0;
+					batS = 0;
+					scoreStatus = 0;
+					scoreboardupdate = 0;
+					cantype = 0;
+					playernamenow = 0;
+					playername[20];
+					canbackspace = 0;
+					backspacetime = 0;
+
+					sword0 = 0;
+					shield = 0;
+					stopwatch = 0;
+					keyPressed = 0;
+					bossBullet = 0;
+					swordStatus = 0;
+					weaponStatus = 0;
+					beam = 0;
+					laserStatus = 3;
+					SWCD = 5;
+					immune = 0;
+					immuneBlink = 0;
+					batImmune = 0;
+					slimeImmune = 0;
+					dragonImmune = 0;
+					weaponSwap = 0;
+					sword0 = 0;
+					weaponsType = 0;
+					bulletNow = 0;
+					arrowNow = 0;
+					pBulletNow = 0;
+					pBulletStatus = 0;
+					timeC = 0;
+					pause = 0;
+					check1 = 0;
+					check2 = 0;
+					gun = 0;
+					pBulletInt = 0;
+					playerHealthStatus = 4;
+					batHealth = 3;
+					slimeHealth = 3;
+					skeletonHealth = 3;
+					dragonHealth = 0;
+					playerAnimationFrame = 0;
+					for (int i = 0; i < 110; i++)
+					{
+						if (i == 110) i = 0;
+						pBulletX[i] = { NULL - 1000 };
+						pBulletY[i] = { NULL - 1000 };
+						pBulletDeg[i] = { 0 };
+					}
+					cdpb = 0;
+					a = 200;
+					dragonPosY = 0.0;
+					dragonCount = 0;
+					for (int i = 0; i < 1100; i++)
+					{
+						if (i == 1100) i = 0;
+						bulletX[i] = { NULL - 1000 };
+						bulletY[i] = { NULL - 1000 };
+						bulletDeg[i] = { 0 };
+					}
+					cdr = 0;
+					degChange = 0;
+					for (int i = 0; i < 10; i++)
+					{
+						if (i == 10) i = 0;
+						arrowX[i] = { NULL - 1000 };
+						arrowY[i] = { NULL - 1000 };
+					}
+					cda = 0;
+					batAnimationFrame = 0;
+					playerSprite.setPosition(playerSpawnPoint);
+					pBullet.setPosition(NULL - 1000, NULL - 1000);
+					dragonSprite.setPosition(dragonSpawnpoint);
+					chargeBeamSprite.setPosition(780.f, 250.f);
+					batSprite.setPosition(batSpawnPoint);
+					slimeSprite.setPosition(slimeSpawnPoint);
+					itemBoxSprite.setPosition(itemBoxSpawnpoint);
+
+					CTime.setString("12345");
+					CTime.setString("12345");
+					SCORENow.setString("12345");
+					name.setString("12345");
+					player1.setString("Player");
+					player2.setString("Player");
+					player3.setString("Player");
+					player4.setString("Player");
+					player5.setString("Player");
+					score1.setString("12345");
+					score2.setString("12345");
+					score3.setString("12345");
+					score4.setString("12345");
+					score5.setString("12345");
+
+				}
+				SUBMIT.setScale(0.72f, 0.72f);
+				SUBMIT.setColor(sf::Color(255, 255, 255, 255));
+			}
+			else
+			{
+				SUBMIT.setScale(0.63f, 0.63f);
+				SUBMIT.setColor(sf::Color(255, 255, 255, 200));
+			}
+			SUBMIT.setPosition(-200.f + ((pauseTexture.getSize().x * pauseMenu.getScale().x) / 2)
+				- ((SUBMITTexture.getSize().x / 2) * SUBMIT.getScale().x)
+				, 470.f + ((((pauseTexture.getSize().y * 4) / 6) * pauseMenu.getScale().y) / 2)
+				- ((SUBMITTexture.getSize().y / 2) * SUBMIT.getScale().y));
+			window.draw(SUBMIT);
 		}
 
 		// Lose
 		if (playerHealthStatus <= 0) STAGE = 5;
 		if (STAGE == 5)
 		{
-			playerSprite.setPosition(playerSpawnPoint);
-			dragonSprite.setPosition(dragonSpawnpoint);
-			batSprite.setPosition(batSpawnPoint);
-			slimeSprite.setPosition(slimeSpawnPoint);
-			itemBoxSprite.setPosition(itemBoxSpawnpoint);
-
-			window.clear();
+			window.draw(menu);
 			window.draw(gameOverSprite);
+
+			// SUBMIT
+			if (mouse.getPosition(window).x > 830 && mouse.getPosition(window).x < 1034
+				&& mouse.getPosition(window).y > 618 && mouse.getPosition(window).y < 651)
+			{
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				{
+					STAGE = 3;
+
+					SCOREA = 0;
+					SCOREB = 0;
+					SCOREC = 0;
+
+					cantype = 0;
+					playernamenow = 0;
+					playername[20];
+					canbackspace = 0;
+					totalScore = 0;
+					scoreCheck = 0;
+					slimeS = 0;
+					batS = 0;
+					scoreStatus = 0;
+					scoreboardupdate = 0;
+					cantype = 0;
+					playernamenow = 0;
+					playername[20];
+					canbackspace = 0;
+					backspacetime = 0;
+
+					sword0 = 0;
+					shield = 0;
+					stopwatch = 0;
+					keyPressed = 0;
+					bossBullet = 0;
+					swordStatus = 0;
+					weaponStatus = 0;
+					beam = 0;
+					laserStatus = 3;
+					SWCD = 5;
+					immune = 0;
+					immuneBlink = 0;
+					batImmune = 0;
+					slimeImmune = 0;
+					dragonImmune = 0;
+					weaponSwap = 0;
+					sword0 = 0;
+					weaponsType = 0;
+					bulletNow = 0;
+					arrowNow = 0;
+					pBulletNow = 0;
+					pBulletStatus = 0;
+					timeC = 0;
+					pause = 0;
+					check1 = 0;
+					check2 = 0;
+					gun = 0;
+					pBulletInt = 0;
+					playerHealthStatus = 4;
+					batHealth = 3;
+					slimeHealth = 3;
+					skeletonHealth = 3;
+					dragonHealth = 0;
+					playerAnimationFrame = 0;
+					for (int i = 0; i < 110; i++)
+					{
+						if (i == 110) i = 0;
+						pBulletX[i] = { NULL - 1000 };
+						pBulletY[i] = { NULL - 1000 };
+						pBulletDeg[i] = { 0 };
+					}
+					cdpb = 0;
+					a = 200;
+					dragonPosY = 0.0;
+					dragonCount = 0;
+					for (int i = 0; i < 1100; i++)
+					{
+						if (i == 1100) i = 0;
+						bulletX[i] = { NULL - 1000 };
+						bulletY[i] = { NULL - 1000 };
+						bulletDeg[i] = { 0 };
+					}
+					cdr = 0;
+					degChange = 0;
+					for (int i = 0; i < 10; i++)
+					{
+						if (i == 10) i = 0;
+						arrowX[i] = { NULL - 1000 };
+						arrowY[i] = { NULL - 1000 };
+					}
+					cda = 0;
+					batAnimationFrame = 0;
+					playerSprite.setPosition(playerSpawnPoint);
+					pBullet.setPosition(NULL - 1000, NULL - 1000);
+					dragonSprite.setPosition(dragonSpawnpoint);
+					chargeBeamSprite.setPosition(780.f, 250.f);
+					batSprite.setPosition(batSpawnPoint);
+					slimeSprite.setPosition(slimeSpawnPoint);
+					itemBoxSprite.setPosition(itemBoxSpawnpoint);
+
+					CTime.setString("12345");
+					CTime.setString("12345");
+					SCORENow.setString("12345");
+					name.setString("12345");
+					player1.setString("Player");
+					player2.setString("Player");
+					player3.setString("Player");
+					player4.setString("Player");
+					player5.setString("Player");
+					score1.setString("12345");
+					score2.setString("12345");
+					score3.setString("12345");
+					score4.setString("12345");
+					score5.setString("12345");
+
+				}
+				MAINMENU1.setScale(0.35f, 0.35f);
+				MAINMENU1.setColor(sf::Color(255, 255, 255, 255));
+			}
+			else
+			{
+				MAINMENU1.setScale(0.28f, 0.28f);
+				MAINMENU1.setColor(sf::Color(255, 255, 255, 200));
+			}
+			MAINMENU1.setPosition(600.f + ((pauseTexture.getSize().x * pauseMenu.getScale().x) / 2)
+				- ((MAINMENUTexture.getSize().x / 2) * MAINMENU1.getScale().x)
+				, 470.f + ((((pauseTexture.getSize().y * 4) / 6) * pauseMenu.getScale().y) / 2)
+				- ((MAINMENUTexture.getSize().y / 2) * MAINMENU1.getScale().y));
+			window.draw(MAINMENU1);
 		}
 
-		// Restart
-		if (STAGE != 0 && STAGE != 1 && STAGE != 2)
+		// Music
+		if ((STAGE == 4 || STAGE == 3) && music == 0)
 		{
-			sword0 = 0;
-			shield = 0;
-			stopwatch = 0;
-			keyPressed = 0;
-			bossBullet = 0;
-			swordStatus = 0;
-			weaponStatus = 0;
-			beam = 0;
-			laserStatus = 3;
-			SWCD = 5;
-			immune = 0;
-			immuneBlink = 0;
-			batImmune = 0;
-			slimeImmune = 0;
-			dragonImmune = 0;
-			weaponSwap = 0;
-			sword0 = 0;
-			weaponsType = 0;
-			bulletNow = 0;
-			arrowNow = 0;
-			pBulletNow = 0;
-			pBulletStatus = 0;
-			timeC = 0;
-			pause = 0;
-			check1 = 0;
-			check2 = 0;
-			gun = 0;
-			pBulletInt = 0;
-			playerHealthStatus = 4;
-			batHealth = 3;
-			slimeHealth = 3;
-			skeletonHealth = 3;
-			dragonHealth = 0;
-			playerAnimationFrame = 0;
-			for (int i = 0; i < 50; i++)
-			{
-				if (i == 50) i = 0;
-				pBulletX[i] = { NULL - 1000 };
-				pBulletY[i] = { NULL - 1000 };
-				pBulletDeg[i] = { 0 };
-			}
-			cdpb = 0;
-			a = 200;
-			dragonPosY = 0.0;
-			dragonCount = 0;
-			for (int i = 0; i < 1100; i++)
-			{
-				if (i == 1100) i = 0;
-				bulletX[i] = { NULL - 1000 };
-				bulletY[i] = { NULL - 1000 };
-				bulletDeg[i] = { 0 };
-			}
-			cdr = 0;
-			degChange = 0;
-			for (int i = 0; i < 10; i++)
-			{
-				if (i == 10) i = 0;
-				arrowX[i] = { NULL - 1000 };
-				arrowY[i] = { NULL - 1000 };
-			}
-			cda = 0;
-			batAnimationFrame = 0;
-			playerSprite.setPosition(playerSpawnPoint);
-			pBullet.setPosition(NULL - 1000, NULL - 1000);
-			dragonSprite.setPosition(dragonSpawnpoint);
-			chargeBeamSprite.setPosition(780.f, 250.f);
-			batSprite.setPosition(batSpawnPoint);
-			slimeSprite.setPosition(slimeSpawnPoint);
-			itemBoxSprite.setPosition(itemBoxSpawnpoint);
+			epicBossFightBG.stop();
+			victoryMusicBG.play();
+			music = 1;
 		}
+		if (STAGE == 0 && mouse.getPosition(window).x > 460 && mouse.getPosition(window).x < 625
+			&& mouse.getPosition(window).y > 245 && mouse.getPosition(window).y < 310 && music == 1)
+		{
+			victoryMusicBG.stop();
+			epicBossFightBG.play();
+			music = 0;
+		}		
 
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 		{
@@ -1945,7 +2659,7 @@ int main()
 			}
 			check1 = 0;
 		}
-
+		std::cout << "X = " << mouse.getPosition(window).x << " Y = " << mouse.getPosition(window).y << std::endl;
 		window.display();
 	}
 	return 0;
